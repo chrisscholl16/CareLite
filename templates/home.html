@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to CareConnectLite Home Page</h1>
+        <h2>Hello, {{ current_user.username }} please login below</h2>
+    </div>
+    <div class="container portal-container">
+    <div class="row justify-content-center g-4">
+
+        <!-- Nurse Portal -->
+        <div class="col-lg-5 col-md-6">
+            <a href="{{ url_for('login') }}" class="portal-link">
+                <div class="card portal-card nurse-card h-100">
+                    <div class="card-body text-center">
+
+                        <div class="portal-icon nurse-icon">
+                            <i class="bi bi-heart-pulse"></i>
+                        </div>
+
+                        <h2 class="portal-title">Nurse Portal</h2>
+
+                        <p class="portal-text">
+                            Access the nurse portal to manage patient records,
+                            appointments, and healthcare information.
+                        </p>
+
+                        <div class="portal-button nurse-button">
+                            Enter Nurse Portal
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Patient Portal -->
+        <div class="col-lg-5 col-md-6">
+            <a href="{{ url_for('login') }}" class="portal-link">
+                <div class="card portal-card patient-card h-100">
+                    <div class="card-body text-center">
+
+                        <div class="portal-icon patient-icon">
+                            <i class="bi bi-person-heart"></i>
+                        </div>
+
+                        <h2 class="portal-title">Patient Portal</h2>
+
+                        <p class="portal-text">
+                            Access your patient portal to view your information,
+                            appointments, and healthcare records.
+                        </p>
+
+                        <div class="portal-button patient-button">
+                            Enter Patient Portal
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+
+{% endblock content %}

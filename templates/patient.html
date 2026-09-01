@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="patient-page">
+
+    <div class="container py-5">
+
+        <!-- =========================
+             PAGE HEADER
+             ========================= -->
+
+        <div class="patient-header">
+
+            <div>
+
+                <div class="patient-header-icon">
+                    <i class="bi bi-person-heart"></i>
+                </div>
+
+                <h1>Patient Portal</h1>
+
+                <p class="patient-subtitle">
+                    Welcome back, {{ current_user.username }}
+                </p>
+
+            </div>
+
+
+            <div class="patient-user-info">
+
+                <i class="bi bi-person-circle"></i>
+
+                <div>
+                    <strong>{{ current_user.username }}</strong>
+                    <small>{{ current_user.email }}</small>
+                </div>
+
+            </div>
+        </div>
+<!-- =========================
+     PATIENT RECORD
+     ========================= -->
+
+<div class="patient-dashboard-card">
+
+            <div class="patient-card-header">
+
+                <div class="patient-section-icon">
+                    <i class="bi bi-file-medical"></i>
+                </div>
+
+                <div>
+                    <h3>My Patient Record</h3>
+
+                    <p>
+                        View your personal healthcare information.
+                    </p>
+                </div>
+
+            </div>
+
+
+            {% if patient_record %}
+
+                <div class="patient-record">
+
+                    <!-- Patient Name -->
+
+                    <div class="record-item record-name">
+
+                        <div class="record-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+
+                        <div>
+                            <span>Patient Name</span>
+                            <strong>
+                                {{ patient_record.patient_name }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Date of Birth -->
+
+                    <div class="record-item">
+
+                        <div class="record-icon">
+                            <i class="bi bi-calendar3"></i>
+                        </div>
+
+                        <div>
+                            <span>Date of Birth</span>
+                            <strong>
+                                {{ patient_record.date_of_birth.strftime('%m/%d/%Y') }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Blood Pressure -->
+
+                    <div class="record-item">
+
+                        <div class="record-icon">
+                            <i class="bi bi-activity"></i>
+                        </div>
+
+                        <div>
+                            <span>Blood Pressure</span>
+
+                            <strong>
+                                {{ patient_record.blood_pressure or "Not recorded" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Temperature -->
+
+                    <div class="record-item">
+
+                        <div class="record-icon">
+                            <i class="bi bi-thermometer-half"></i>
+                        </div>
+
+                        <div>
+                            <span>Temperature</span>
+
+                            <strong>
+
+                                {% if patient_record.temperature %}
+                                    {{ patient_record.temperature }} °F
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Notes -->
+
+                    <div class="record-item record-notes">
+
+                        <div class="record-icon">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+
+                        <div>
+
+                            <span>Notes</span>
+
+                            <strong>
+                                {{ patient_record.notes or "No notes available" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Record Created -->
+
+                    <div class="record-item">
+
+                        <div class="record-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+
+                        <div>
+
+                            <span>Record Created</span>
+
+                            <strong>
+                                {{ patient_record.created_at.strftime('%m/%d/%Y %I:%M %p') }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-patient-record">
+
+                    <i class="bi bi-file-earmark-medical"></i>
+
+                    <h5>No Patient Record</h5>
+
+                    <p>
+                        You do not have a patient record yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =========================
+             APPOINTMENTS
+             ========================= -->
+
+        <div class="patient-dashboard-card">
+
+            <div class="patient-card-header">
+
+                <div class="patient-section-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+
+                <div>
+
+                    <h3>Upcoming Appointments</h3>
+
+                    <p>
+                        View your scheduled healthcare appointments.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if appointments %}
+
+                <div class="table-responsive">
+
+                    <table class="table patient-appointment-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for appointment in appointments %}
+
+                            <tr>
+
+                                <td>
+
+                                    <i class="bi bi-calendar3 me-2"></i>
+
+                                    {{ appointment.appointment_date.strftime('%m/%d/%Y') }}
+
+                                </td>
+
+
+                                <td>
+
+                                    <i class="bi bi-clock me-2"></i>
+
+                                    {{ appointment.appointment_time.strftime('%I:%M %p') }}
+
+                                </td>
+
+
+                                <td>
+                                    {{ appointment.reason }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if appointment.status == 'confirmed' %}
+
+                                        <span class="badge patient-status-confirmed">
+
+                                            <i class="bi bi-check-circle me-1"></i>
+
+                                            Confirmed
+
+                                        </span>
+
+                                    {% elif appointment.status == 'cancelled' %}
+
+                                        <span class="badge patient-status-cancelled">
+
+                                            Cancelled
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge patient-status-pending">
+
+                                            <i class="bi bi-clock me-1"></i>
+
+                                            {{ appointment.status }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-appointments">
+
+                    <i class="bi bi-calendar-x"></i>
+
+                    <h5>No Upcoming Appointments</h5>
+
+                    <p>
+                        You don't have any upcoming appointments.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- Make Appointment -->
+
+            <div class="appointment-action">
+
+                <a
+                    href="{{ url_for('appointments') }}"
+                    class="btn appointment-btn"
+                >
+
+                    <i class="bi bi-calendar-plus me-2"></i>
+
+                    Make an Appointment
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             LOGOUT
+             ========================= -->
+
+        <div class="patient-footer">
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="btn patient-logout-btn"
+            >
+
+                <i class="bi bi-box-arrow-right me-2"></i>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

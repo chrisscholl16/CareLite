@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="nurse-page">
+
+    <!-- =========================
+         PAGE HEADER
+         ========================= -->
+
+    <div class="container py-5">
+
+        <div class="nurse-header">
+
+            <div>
+                <div class="header-icon">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+
+                <h1>Nurse Dashboard</h1>
+
+                <p class="header-subtitle">
+                    Welcome back, {{ current_user.username }}
+                </p>
+            </div>
+
+            <div class="user-info">
+                <i class="bi bi-person-circle"></i>
+                <div>
+                    <strong>{{ current_user.username }}</strong>
+                    <small>{{ current_user.email }}</small>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             FLASH MESSAGES
+             ========================= -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show shadow-sm">
+
+                        <i class="bi
+                            {% if category == 'error' %}
+                                bi-exclamation-triangle
+                            {% else %}
+                                bi-check-circle
+                            {% endif %}
+                            me-2">
+                        </i>
+
+                        {{ message }}
+
+                        <button 
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =========================
+             UPDATE PATIENT CARD
+             ========================= -->
+
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+
+                <div class="section-icon">
+                    <i class="bi bi-clipboard2-pulse"></i>
+                </div>
+
+                <div>
+                    <h3>Update Patient Record</h3>
+                    <p>
+                        Enter or update patient health information below.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form method="POST" action="{{ url_for('nurse') }}">
+
+                <div class="row">
+
+                    <!-- Patient -->
+                    <div class="col-md-6 mb-4">
+
+                        <label for="patient_id" class="form-label">
+                            <i class="bi bi-person me-1"></i>
+                            Select Patient
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="patient_id"
+                            name="patient_id"
+                            required
+                        >
+
+                            <option value="" selected disabled>
+                                -- Select a patient --
+                            </option>
+
+                            {% for patient in patients %}
+
+                                <option value="{{ patient.id }}">
+                                    {{ patient.patient_record.patient_name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Blood Pressure -->
+                    <div class="col-md-3 mb-4">
+
+                        <label for="blood_pressure" class="form-label">
+                            <i class="bi bi-activity me-1"></i>
+                            Blood Pressure
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="blood_pressure"
+                            name="blood_pressure"
+                            placeholder="120/80"
+                        >
+
+                    </div>
+
+
+                    <!-- Temperature -->
+                    <div class="col-md-3 mb-4">
+
+                        <label for="temperature" class="form-label">
+                            <i class="bi bi-thermometer-half me-1"></i>
+                            Temperature
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            class="form-control"
+                            id="temperature"
+                            name="temperature"
+                            placeholder="98.6"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Notes -->
+                <div class="mb-4">
+
+                    <label for="notes" class="form-label">
+                        <i class="bi bi-journal-text me-1"></i>
+                        Patient Notes
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        id="notes"
+                        name="notes"
+                        rows="5"
+                        placeholder="Enter patient notes..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- Save Button -->
+
+                <button
+                    type="submit"
+                    class="btn save-record-btn"
+                >
+                    <i class="bi bi-check-circle me-2"></i>
+                    Save Patient Record
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================
+             APPOINTMENTS
+             ========================= -->
+
+        <div class="dashboard-card appointments-card">
+
+            <div class="card-header-custom">
+
+                <div class="section-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+
+                <div>
+                    <h3>Upcoming Appointments</h3>
+                    <p>
+                        View scheduled patient appointments.
+                    </p>
+                </div>
+
+            </div>
+
+
+            {% if appointments %}
+
+            <div class="table-responsive">
+
+                <table class="table appointment-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for appointment in appointments %}
+
+                        <tr>
+
+                            <td>
+                                <i class="bi bi-person-circle me-2"></i>
+                                {{ appointment.patient.username }}
+                            </td>
+
+                            <td>
+                                <i class="bi bi-calendar3 me-1"></i>
+                                {{ appointment.appointment_date.strftime('%m/%d/%Y') }}
+                            </td>
+
+                            <td>
+                                <i class="bi bi-clock me-1"></i>
+                                {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                            </td>
+
+                            <td>
+                                {{ appointment.reason }}
+                            </td>
+
+                            <td>
+
+                                {% if appointment.status == 'confirmed' %}
+
+                                    <span class="badge status-confirmed">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Confirmed
+                                    </span>
+
+                                {% elif appointment.status == 'cancelled' %}
+
+                                    <span class="badge status-cancelled">
+                                        Cancelled
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge status-pending">
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ appointment.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+                <div class="empty-appointments">
+
+                    <i class="bi bi-calendar-x"></i>
+
+                    <h5>No Upcoming Appointments</h5>
+
+                    <p>
+                        There are currently no upcoming patient appointments.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =========================
+             LOGOUT
+             ========================= -->
+
+        <div class="dashboard-footer">
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="btn logout-btn"
+            >
+                <i class="bi bi-box-arrow-right me-2"></i>
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

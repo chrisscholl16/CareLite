@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <h1>Make an Appointment</h1>
+
+    <p>
+        Hello, {{ current_user.username }}
+    </p>
+
+    <hr>
+
+    <!-- Flash Messages -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- Appointment Form -->
+
+    <form method="POST">
+
+        <!-- Date -->
+
+        <div class="mb-3">
+
+            <label
+                for="appointment_date"
+                class="form-label"
+            >
+                Appointment Date
+            </label>
+
+            <input
+                type="date"
+                class="form-control"
+                id="appointment_date"
+                name="appointment_date"
+                required
+            >
+
+        </div>
+
+
+        <!-- Time -->
+
+        <div class="mb-3">
+
+            <label
+                for="appointment_time"
+                class="form-label"
+            >
+                Appointment Time
+            </label>
+
+            <select
+                class="form-select"
+                id="appointment_time"
+                name="appointment_time"
+                required
+            >
+
+                <option value="" selected disabled>
+                    -- Select a time --
+                </option>
+
+                <option value="09:00">9:00 AM</option>
+                <option value="09:30">9:30 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="13:00">1:00 PM</option>
+                <option value="13:30">1:30 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="14:30">2:30 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="15:30">3:30 PM</option>
+                <option value="16:00">4:00 PM</option>
+
+            </select>
+
+        </div>
+
+
+        <!-- Reason -->
+
+        <div class="mb-3">
+
+            <label
+                for="reason"
+                class="form-label"
+            >
+                Reason for Appointment
+            </label>
+
+            <textarea
+                class="form-control"
+                id="reason"
+                name="reason"
+                rows="4"
+                maxlength="255"
+                required
+                placeholder="Enter the reason for your appointment..."
+            ></textarea>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-info"
+        >
+            Schedule Appointment
+        </button>
+
+        <a
+            href="{{ url_for('patient') }}"
+            class="btn btn-secondary"
+        >
+            Back to Patient Page
+        </a>
+
+    </form>
+
+
+    <hr class="my-5">
+
+
+    <!-- Existing Appointments -->
+
+    <h2>Your Appointments</h2>
+
+    {% if appointments %}
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for appointment in appointments %}
+
+                    <tr>
+
+                        <td>
+                            {{ appointment.appointment_date.strftime('%m/%d/%Y') }}
+                        </td>
+
+                        <td>
+                            {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                        </td>
+
+                        <td>
+                            {{ appointment.reason }}
+                        </td>
+
+                        <td>
+                            {{ appointment.status }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="alert alert-info">
+            You do not have any appointments scheduled.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock content %}
