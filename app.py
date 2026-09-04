@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 from config import Config
 from flask_migrate import Migrate
-from models import db, User, PasswordResetId
+from models import db, User, PasswordResetId, PatientRecord, Appointment
 from sqlalchemy import select
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mail import Mail, Message
 from functools import wraps
-from models import db, User, PasswordResetId, PatientRecord, Appointment
 from datetime import datetime, timedelta
 
 
