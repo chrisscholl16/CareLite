@@ -12,14 +12,18 @@
 <body>
     <div class="container">
         <h1>Welcome to CareConnectLite Home</h1>
-        <h2>Hello, {{ current_user.username }} please login below</h2>
+        {% if current_user.is_authenticated %}
+            <h2>Welcome back, {{ current_user.username }}!</h2>
+        {% else %}
+            <h2>Please login below</h2>
+        {% endif %}
     </div>
     <div class="container portal-container">
     <div class="row justify-content-center g-4">
 
         <!-- Nurse Portal -->
         <div class="col-lg-5 col-md-6">
-            <a href="{{ url_for('login') }}" class="portal-link">
+            <a href="{% if current_user.is_authenticated %}{% if current_user.is_patient() %}{{ url_for('patient') }}{% elif current_user.is_nurse() %}{{ url_for('nurse') }}{% elif current_user.is_admin() %}{{ url_for('admin') }}{% else %}{{ url_for('login') }}{% endif %}{% else %}{{ url_for('login') }}{% endif %}" class="portal-link">
                 <div class="card portal-card nurse-card h-100">
                     <div class="card-body text-center">
 
@@ -46,7 +50,7 @@
 
         <!-- Patient Portal -->
         <div class="col-lg-5 col-md-6">
-            <a href="{{ url_for('login') }}" class="portal-link">
+            <a href="{% if current_user.is_authenticated %}{% if current_user.is_patient() %}{{ url_for('patient') }}{% elif current_user.is_nurse() %}{{ url_for('nurse') }}{% elif current_user.is_admin() %}{{ url_for('admin') }}{% else %}{{ url_for('login') }}{% endif %}{% else %}{{ url_for('login') }}{% endif %}" class="portal-link">
                 <div class="card portal-card patient-card h-100">
                     <div class="card-body text-center">
 

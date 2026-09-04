@@ -309,16 +309,17 @@ def patient():
 
     # Get upcoming appointments for this patient
     appointments = db.session.scalars(
-        select(Appointment)
-        .where(
-            Appointment.patient_id == current_user.id,
-            Appointment.status == "Scheduled"
-        )
-        .order_by(
-            Appointment.appointment_date,
-            Appointment.appointment_time
-        )
-    ).all()
+    select(Appointment)
+    .where(
+        Appointment.patient_id == current_user.id,
+        Appointment.status == "Scheduled",
+        Appointment.appointment_date >= datetime.now().date()
+    )
+    .order_by(
+        Appointment.appointment_date,
+        Appointment.appointment_time
+    )
+).all()
 
     now = datetime.now()
     reminder_limit = now + timedelta(hours=24)
@@ -415,12 +416,15 @@ def nurse():
 
     appointments = db.session.scalars(
     select(Appointment)
-    .where(Appointment.status == "Scheduled")
+    .where(
+        Appointment.status == "Scheduled",
+        Appointment.appointment_date >= datetime.now().date()
+    )
     .order_by(
         Appointment.appointment_date,
         Appointment.appointment_time
     )
-).all()
+    ).all()
 
     return render_template(
         "nurse.html",
@@ -441,11 +445,15 @@ def admin():
     ).all()
 
     appointments = db.session.scalars(
-        select(Appointment)
-        .order_by(
-            Appointment.appointment_date,
-            Appointment.appointment_time
-        )
+    select(Appointment)
+    .where(
+        Appointment.appointment_date >= datetime.now().date(),
+        Appointment.status == "Scheduled"
+    )
+    .order_by(
+        Appointment.appointment_date,
+        Appointment.appointment_time
+    )
     ).all()
 
     return render_template(
