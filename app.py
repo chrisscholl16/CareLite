@@ -345,6 +345,37 @@ def patient():
         reminders=reminders
     )
 
+@app.route('/appointment/cancel/<int:appointment_id>', methods=['POST'])
+@role_required('patient')
+def cancel_appointment(appointment_id):
+
+    appointment = db.session.get(Appointment, appointment_id)
+
+    # Make sure the appointment exists
+    if not appointment:
+        flash("Appointment not found.", "danger")
+        return redirect(url_for('patient'))
+
+    # Security check:
+    # Make sure the appointment belongs to the logged-in patient
+    if appointment.patient_id != current_user.id:
+        flash("You do not have permission to cancel this appointment.", "danger")
+        return redirect(url_for('patient'))
+
+    # Make sure it hasn't already been cancelled
+    if appointment.status == "Cancelled":
+        flash("This appointment has already been cancelled.", "warning")
+        return redirect(url_for('patient'))
+
+    # Cancel the appointment
+    appointment.status = "Cancelled"
+
+    db.session.commit()
+
+    flash("Your appointment has been cancelled.", "success")
+
+    return redirect(url_for('patient'))
+
 
 @app.route('/nurse', methods=['GET', 'POST'])
 @role_required('nurse')

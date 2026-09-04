@@ -269,136 +269,111 @@
 
 
         <!-- =========================
-             APPOINTMENTS
-             ========================= -->
+     UPCOMING APPOINTMENTS
+     ========================= -->
 
-        <div class="patient-dashboard-card">
+<div class="patient-dashboard-card">
 
-            <div class="patient-card-header">
+    <div class="patient-card-header">
 
-                <div class="patient-section-icon">
-                    <i class="bi bi-calendar-check"></i>
-                </div>
+        <div class="patient-section-icon">
+            <i class="bi bi-calendar-check"></i>
+        </div>
 
-                <div>
+        <div>
+            <h3>Upcoming Appointments</h3>
+            <p>View and manage your upcoming appointments.</p>
+        </div>
 
-                    <h3>Upcoming Appointments</h3>
-
-                    <p>
-                        View your scheduled healthcare appointments.
-                    </p>
-
-                </div>
-
-            </div>
+    </div>
 
 
-            {% if appointments %}
+    {% if appointments %}
 
-                <div class="table-responsive">
+        <div class="table-responsive">
 
-                    <table class="table patient-appointment-table">
+            <table class="table table-hover align-middle">
 
-                        <thead>
+                <thead>
 
-                            <tr>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                            </tr>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
 
-                        </thead>
-
-
-                        <tbody>
-
-                            {% for appointment in appointments %}
-
-                            <tr>
-
-                                <td>
-
-                                    <i class="bi bi-calendar3 me-2"></i>
-
-                                    {{ appointment.appointment_date.strftime('%m/%d/%Y') }}
-
-                                </td>
+                </thead>
 
 
-                                <td>
+                <tbody>
 
-                                    <i class="bi bi-clock me-2"></i>
+                    {% for appointment in appointments %}
 
-                                    {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                        <tr>
 
-                                </td>
+                            <td>
+                                {{ appointment.appointment_date.strftime('%m/%d/%Y') }}
+                            </td>
+
+                            <td>
+                                {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                            </td>
+
+                            <td>
+                                {{ appointment.reason }}
+                            </td>
+
+                            <td>
+
+                                <span class="badge bg-success">
+                                    {{ appointment.status }}
+                                </span>
+
+                            </td>
 
 
-                                <td>
-                                    {{ appointment.reason }}
-                                </td>
+                            <!-- CANCEL BUTTON -->
+                            <td>
 
+                                <form
+                                    action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure you want to cancel this appointment?');"
+                                >
 
-                                <td>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger btn-sm"
+                                    >
+                                        <i class="bi bi-x-circle"></i>
+                                        Cancel
+                                    </button>
 
-                                    {% if appointment.status == 'confirmed' %}
+                                </form>
 
-                                        <span class="badge patient-status-confirmed">
+                            </td>
 
-                                            <i class="bi bi-check-circle me-1"></i>
+                        </tr>
 
-                                            Confirmed
+                    {% endfor %}
 
-                                        </span>
+                </tbody>
 
-                                    {% elif appointment.status == 'cancelled' %}
+            </table>
 
-                                        <span class="badge patient-status-cancelled">
+        </div>
 
-                                            Cancelled
+    {% else %}
 
-                                        </span>
+        <div class="alert alert-info">
+            You do not have any upcoming appointments.
+        </div>
 
-                                    {% else %}
+    {% endif %}
 
-                                        <span class="badge patient-status-pending">
-
-                                            <i class="bi bi-clock me-1"></i>
-
-                                            {{ appointment.status }}
-
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-                            </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            {% else %}
-
-                <div class="empty-appointments">
-
-                    <i class="bi bi-calendar-x"></i>
-
-                    <h5>No Upcoming Appointments</h5>
-
-                    <p>
-                        You don't have any upcoming appointments.
-                    </p>
-
-                </div>
-
-            {% endif %}
+</div>
 
 
             <!-- Make Appointment -->
