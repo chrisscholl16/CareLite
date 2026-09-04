@@ -8,6 +8,7 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 from flask_mail import Mail, Message
 from functools import wraps
 from models import db, User, PasswordResetId, PatientRecord, Appointment
+from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
@@ -320,10 +321,28 @@ def patient():
         )
     ).all()
 
+    now = datetime.now()
+    reminder_limit = now + timedelta(hours=24)
+
+    reminders = []
+
+    for appointment in appointments:
+
+        appointment_datetime = datetime.combine(
+            appointment.appointment_date,
+            appointment.appointment_time
+        )
+
+        # Add appointment to reminders if it is
+        # happening within the next 24 hours
+        if now <= appointment_datetime <= reminder_limit:
+            reminders.append(appointment)
+
     return render_template(
         'patient.html',
         patient_record=patient_record,
-        appointments=appointments
+        appointments=appointments,
+        reminders=reminders
     )
 
 

@@ -7,6 +7,61 @@
     <div class="container py-5">
 
         <!-- =========================
+             APPOINTMENT REMINDER
+             ========================= -->
+
+        {% if reminders %}
+            {% for appointment in reminders %}
+
+                <div class="alert alert-warning shadow-sm mb-4" role="alert">
+
+                    <div class="d-flex align-items-start">
+
+                        <div class="me-3 fs-3">
+                            🔔
+                        </div>
+
+                        <div>
+
+                            <h4 class="alert-heading">
+                                Appointment Reminder
+                            </h4>
+
+                            <p class="mb-2">
+                                You have an upcoming appointment within the next 24 hours.
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Date:</strong>
+                                {{ appointment.appointment_date.strftime('%m/%d/%Y') }}
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Time:</strong>
+                                {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                            </p>
+
+                            <p class="mb-3">
+                                <strong>Reason:</strong>
+                                {{ appointment.reason }}
+                            </p>
+
+                            <a href="{{ url_for('appointments') }}"
+                               class="btn btn-warning">
+                                View My Appointments
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+
+        <!-- =========================
              PAGE HEADER
              ========================= -->
 
@@ -21,10 +76,15 @@
                 <h1>Patient Portal</h1>
 
                 <p class="patient-subtitle">
-                    Welcome back, {{ current_user.username }}
+                    Welcome, {{ current_user.username }}!
                 </p>
 
             </div>
+
+        </div>
+
+
+        <!-- YOUR EXISTING PATIENT CONTENT GOES HERE -->
 
 
             <div class="patient-user-info">
